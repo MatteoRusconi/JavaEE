@@ -15,6 +15,7 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.camel.component.jms.reply.MessageSelectorCreator;
 
 public class MessageReceiver {
 
@@ -45,10 +46,10 @@ public class MessageReceiver {
 		QueueBrowser browser = session.createBrowser(queue);
 		Enumeration<?> messagesInQueue = browser.getEnumeration();
 
-		while (messagesInQueue.hasMoreElements()) {
-			messagesInQueue.nextElement();
+//		while (messagesInQueue.hasMoreElements()) {
+//			messagesInQueue.nextElement();
 			// Here we receive the message.
-			Message message = consumer.receive();
+			Message message = consumer.receiveNoWait();
 
 			// We will be using TestMessage in our example. MessageProducer sent us a
 			// TextMessage
@@ -56,9 +57,9 @@ public class MessageReceiver {
 
 			if (message instanceof TextMessage) {
 				TextMessage textMessage = (TextMessage) message;
-				System.out.println("Received message '" + textMessage.getText() + "'");
+				System.out.println(message.getStringProperty("mittente") + ": " + textMessage.getText());
 			}
-		}
+//		}
 
 		connection.close();
 	}

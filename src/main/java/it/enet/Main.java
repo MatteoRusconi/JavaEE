@@ -7,17 +7,14 @@ import org.apache.activemq.ActiveMQConnection;
 
 public class Main {
 
-	// URL of the JMS server. DEFAULT_BROKER_URL will just mean that JMS server is
-	// on localhost
-	private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
-
-	// default broker URL is : tcp://localhost:61616"
-	private static String subject = "JCG_QUEUE"; // Queue Name.You can create any/many queue names as per your
-
 	public static void main(String[] args) throws JMSException {
 
 		Scanner scan = new Scanner(System.in);
 		Boolean cond = true;
+
+		String mittente = null;
+		System.out.println("Inserire nome:");
+		mittente = scan.nextLine();
 
 		while (cond) {
 			System.out.println("1. Invia un messaggio");
@@ -30,7 +27,7 @@ public class Main {
 			case 1:
 				System.out.println("Messaggio da inviare:");
 				textMessage = scan.nextLine();
-				MessageSender.sender(textMessage);
+				MessageSender.sender(mittente, textMessage);
 				break;
 			case 2:
 				System.out.println("Messaggi ricevuti:");

@@ -21,12 +21,12 @@ public class MessageSender {
 	private static String subject = "JCG_QUEUE"; // Queue Name.You can create any/many queue names as per your
 													// requirement.
 
-	public static void sender(String textMessage) throws JMSException {
+	public static void sender(String mittente, String textMessage) throws JMSException {
 		// Getting JMS connection from the server
 		// Getting JMS connection from the server
 		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
 		Connection connection = connectionFactory.createConnection();
-		
+
 		// Creating session for seding messages
 		connection.start();
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -40,12 +40,10 @@ public class MessageSender {
 
 		// We will send a small text message saying 'Hello World!!!'
 		TextMessage message = session.createTextMessage(textMessage);
-
+		message.setStringProperty("mittente", mittente);
 		// Here we are sending our message!
 		producer.send(message);
 
-		System.out.println("JCG printing@@ '" + message.getText() + "'");
-		
 		connection.close();
 	}
 }

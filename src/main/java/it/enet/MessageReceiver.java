@@ -1,11 +1,14 @@
 package it.enet;
 
+import java.util.Enumeration;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
@@ -37,15 +40,23 @@ public class MessageReceiver {
 		MessageConsumer consumer = session.createConsumer(destination);
 
 		// Here we receive the message.
-		Message message = consumer.receive();
+		// Message message = consumer.receive();
+		Queue queue = session.createQueue(subject);
+		QueueBrowser browser = session.createBrowser(queue);
+		Enumeration<?> messagesInQueue = browser.getEnumeration();
 
+		while (messagesInQueue.hasMoreElements()) {
+			String queueMessage = ((TextMessage) messagesInQueue.nextElement()).getText();
+			System.out.println(queueMessage);
+		}
 		// We will be using TestMessage in our example. MessageProducer sent us a
 		// TextMessage
 		// so we must cast to it to get access to its .getText() method.
-		if (message instanceof TextMessage) {
-			TextMessage textMessage = (TextMessage) message;
-			System.out.println("Received message '" + textMessage.getText() + "'");
-		}
+		/*
+		 * if (message instanceof TextMessage) { TextMessage textMessage = (TextMessage)
+		 * message.; System.out.println("Received message '" + textMessage.getText() +
+		 * "'"); }
+		 */
 		connection.close();
 	}
 }

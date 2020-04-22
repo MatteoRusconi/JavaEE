@@ -46,6 +46,7 @@ public class MessageReceiver {
 		Enumeration<?> messagesInQueue = browser.getEnumeration();
 
 		while (messagesInQueue.hasMoreElements()) {
+			messagesInQueue.nextElement();
 			// Here we receive the message.
 			Message message = consumer.receive();
 

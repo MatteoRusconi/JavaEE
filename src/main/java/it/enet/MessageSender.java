@@ -21,13 +21,14 @@ public class MessageSender {
 	private static String subject = "JCG_QUEUE"; // Queue Name.You can create any/many queue names as per your
 													// requirement.
 
-	public static void main(String[] args) throws JMSException {
-		// Getting JMS connection from the server and starting it
+	public static void sender(String textMessage) throws JMSException {
+		// Getting JMS connection from the server
+		// Getting JMS connection from the server
 		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
 		Connection connection = connectionFactory.createConnection();
+		
+		// Creating session for seding messages
 		connection.start();
-
-		// Creating a non transactional session to send/receive JMS message.
 		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 		// Destination represents here our queue 'JCG_QUEUE' on the JMS server.
@@ -38,12 +39,13 @@ public class MessageSender {
 		MessageProducer producer = session.createProducer(destination);
 
 		// We will send a small text message saying 'Hello World!!!'
-		TextMessage message = session.createTextMessage("Hello !!! Welcome to the world of ActiveMQ.");
+		TextMessage message = session.createTextMessage(textMessage);
 
 		// Here we are sending our message!
 		producer.send(message);
 
 		System.out.println("JCG printing@@ '" + message.getText() + "'");
+		
 		connection.close();
 	}
 }

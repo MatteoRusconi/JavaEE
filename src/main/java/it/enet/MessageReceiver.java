@@ -1,6 +1,8 @@
 package it.enet;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -15,9 +17,12 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.camel.component.jms.reply.MessageSelectorCreator;
+
+import ch.qos.logback.core.db.dialect.MsSQLDialect;
 
 public class MessageReceiver {
+
+	private static List<Message> msgLetti = new ArrayList();
 
 	// URL of the JMS server
 	private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
@@ -26,7 +31,7 @@ public class MessageReceiver {
 	// Name of the queue we will receive messages from
 	private static String subject = "JCG_QUEUE";
 
-	public static void receiver() throws JMSException {
+	public static void receiver(String username) throws JMSException {
 		// Getting JMS connection from the server
 		// Getting JMS connection from the server
 		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
@@ -46,20 +51,25 @@ public class MessageReceiver {
 		QueueBrowser browser = session.createBrowser(queue);
 		Enumeration<?> messagesInQueue = browser.getEnumeration();
 
-//		while (messagesInQueue.hasMoreElements()) {
-//			messagesInQueue.nextElement();
+		while (messagesInQueue.hasMoreElements()) {
 			// Here we receive the message.
-			Message message = consumer.receiveNoWait();
+			Message message = (Message) messagesInQueue.nextElement();
 
 			// We will be using TestMessage in our example. MessageProducer sent us a
 			// TextMessage
 			// so we must cast to it to get access to its .getText() method.
 
-			if (message instanceof TextMessage) {
-				TextMessage textMessage = (TextMessage) message;
-				System.out.println(message.getStringProperty("mittente") + ": " + textMessage.getText());
+			if (!message.getStringProperty("mittente").contentEquals(username)) {
+
+				if (!msgLetti.contains(message)) {
+					TextMessage textMessage = (TextMessage) message;
+					msgLetti.add(message);
+					System.out.println(message.getStringProperty("mittente") + ": " + textMessage.getText());
+				}
+
 			}
-//		}
+
+		}
 
 		connection.close();
 	}

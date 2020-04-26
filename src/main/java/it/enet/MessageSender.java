@@ -23,7 +23,6 @@ public class MessageSender {
 
 	public static void sender(String mittente, String textMessage) throws JMSException {
 		// Getting JMS connection from the server
-		// Getting JMS connection from the server
 		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
 		Connection connection = connectionFactory.createConnection();
 

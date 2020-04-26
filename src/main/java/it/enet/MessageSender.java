@@ -1,34 +1,33 @@
 package it.enet;
 
 import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.ActiveMQConnection;
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 
+@PropertySource("file:application.properties")
 public class MessageSender {
 
 	// URL of the JMS server. DEFAULT_BROKER_URL will just mean that JMS server is
 	// on localhost
-	private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
-
+	@Autowired
+	private static Connection connection;
+	@Autowired
+	private static Session session;
 	// default broker URL is : tcp://localhost:61616"
-	private static String subject = "JCG_QUEUE"; // Queue Name.You can create any/many queue names as per your
-													// requirement.
+	@Value("${subject}")
+	private static String subject;
 
 	public static void sender(String mittente, String textMessage) throws JMSException {
-		// Getting JMS connection from the server
-		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
-		Connection connection = connectionFactory.createConnection();
 
 		// Creating session for seding messages
 		connection.start();
-		Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
 		// Destination represents here our queue 'JCG_QUEUE' on the JMS server.
 		// The queue will be created automatically on the server.

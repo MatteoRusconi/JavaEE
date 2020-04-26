@@ -15,21 +15,23 @@ import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
-
-import ch.qos.logback.core.db.dialect.MsSQLDialect;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 public class MessageReceiver {
 
 	private static List<Message> msgLetti = new ArrayList();
 
-	// URL of the JMS server
-	private static String url = ActiveMQConnection.DEFAULT_BROKER_URL;
-	// default broker URL is : tcp://localhost:61616"
+	// URL of the JMS server. DEFAULT_BROKER_URL will just mean that JMS server is
 
-	// Name of the queue we will receive messages from
-	private static String subject = "JCG_QUEUE";
+	@Autowired
+	private static Connection connection;
+	@Autowired
+	private static Session session;
+	// default broker URL is : tcp://localhost:61616"
+	@Value("${subject}")
+	private static String subject;
 
 	public static void receiver(String username) throws JMSException {
 		// Getting JMS connection from the server

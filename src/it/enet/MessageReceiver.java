@@ -13,25 +13,20 @@ import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
-@Component
-@PropertySource("file:test.properties")
 @Data
+@Component
 public class MessageReceiver {
 	private static List<Message> msgLetti = new ArrayList();
 	private String subject;
 	private Session session;
 
-	public MessageReceiver() throws JMSException {
-		AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
-		this.session = (Session) ctx.getBean("session");
-		this.subject = "JCG_QUEUE";
+	public MessageReceiver(Session session, String subject) throws JMSException {
+		this.session = session;
+		this.subject = subject;
 	}
 	// default broker URL is : tcp://localhost:61616"
 

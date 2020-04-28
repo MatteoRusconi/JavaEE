@@ -10,26 +10,24 @@ import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
 @Data
+@Component
 public class MessageSender {
 
 	private static List<Message> msgLetti = new ArrayList();
 	private String subject;
 	public Session session;
 
-	public MessageSender() throws JMSException {
-		AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
-		this.session = (Session) ctx.getBean("session");
-		this.subject = "JCG_QUEUE";
+	public MessageSender(Session session, String subject) throws JMSException {
+		this.subject = subject;
+		this.session = session;
 	}
 
 	public void sender(String mittente, String textMessage) throws JMSException {
-
 		Destination destination = session.createQueue(subject);
 
 		// MessageProducer is used for sending messages to the queue.

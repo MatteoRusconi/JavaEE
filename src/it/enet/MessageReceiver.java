@@ -13,34 +13,26 @@ import javax.jms.QueueBrowser;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import lombok.Data;
 
-@Component
-@PropertySource("file:test.properties")
 @Data
+@Component
 public class MessageReceiver {
 	private static List<Message> msgLetti = new ArrayList();
 	private String subject;
 	private Session session;
 
-	public MessageReceiver() throws JMSException {
-		AbstractApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
-		this.session = (Session) ctx.getBean("session");
-		this.subject = "JCG_QUEUE";
+	public MessageReceiver(Session session, String subject) throws JMSException {
+		this.session = session;
+		this.subject = subject;
 	}
-	// default broker URL is : tcp://localhost:61616"
 
 	public void receiver(String username) throws JMSException {
 
-		// Getting the queue 'JCG_QUEUE'
 		Destination destination = session.createQueue(subject);
 
-		// MessageConsumer is used for receiving (consuming) messages
 		MessageConsumer consumer = session.createConsumer(destination);
 
 		Queue queue = session.createQueue(subject);
@@ -48,12 +40,8 @@ public class MessageReceiver {
 		Enumeration<?> messagesInQueue = browser.getEnumeration();
 
 		while (messagesInQueue.hasMoreElements()) {
-			// Here we receive the message.
-			Message message = (Message) messagesInQueue.nextElement();
 
-			// We will be using TestMessage in our example. MessageProducer sent us a
-			// TextMessage
-			// so we must cast to it to get access to its .getText() method.
+			Message message = (Message) messagesInQueue.nextElement();
 
 			if (!message.getStringProperty("mittente").contentEquals(username)) {
 

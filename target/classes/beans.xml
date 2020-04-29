@@ -8,19 +8,36 @@
                 http://www.springframework.org/schema/aop    http://www.springframework.org/schema/aop/spring-aop.xsd">
 
 	<bean id="jmsFactory"
-		class="org.apache.activemq.ActiveMQConnectionFactory" autowire="byName">
+		class="org.apache.activemq.ActiveMQConnectionFactory"
+		autowire="byName">
 		<property name="brokerURL">
 			<value>tcp://localhost:61616</value>
 		</property>
 	</bean>
+
 	<bean id="connection" class="javax.jms.Connection"
 		factory-method="createConnection" lazy-init="true"
-		factory-bean="jmsFactory" init-method="start" destroy-method="close" scope="prototype">
+		factory-bean="jmsFactory" init-method="start" destroy-method="close"
+		scope="prototype">
 	</bean>
+
 	<bean id="session" class="javax.jms.Connection"
 		factory-method="createSession" lazy-init="true"
 		factory-bean="connection" scope="prototype">
-		<constructor-arg  value="false"></constructor-arg>
+		<constructor-arg value="false"></constructor-arg>
 		<constructor-arg value="1"></constructor-arg>
 	</bean>
+
+	<bean id="sender" class="it.enet.MessageSender" autowire="byName"
+		scope="prototype">
+		<constructor-arg name="session" ref="session"></constructor-arg>
+		<constructor-arg value="JCG_QUEUE"></constructor-arg>
+	</bean>
+
+	<bean id="receiver" class="it.enet.MessageReceiver"
+		autowire="byName" scope="prototype">
+		<constructor-arg name="session" ref="session"></constructor-arg>
+		<constructor-arg value="JCG_QUEUE"></constructor-arg>
+	</bean>
+
 </beans>
